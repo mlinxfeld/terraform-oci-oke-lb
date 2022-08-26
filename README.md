@@ -259,6 +259,7 @@ $ kubectl get pods
 4.  Get services
 
 $ kubectl get services
+```
 
 #### STEP 6.
 After testing the environment you can remove the OCI OKE infra. You should just run *terraform destroy* (type **yes** for confirmation of the destroy phase):
