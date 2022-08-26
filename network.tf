@@ -204,6 +204,37 @@ resource "oci_core_security_list" "FoggyKitchenOKELBSecurityList" {
   compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
   display_name   = "FoggyKitchenOKELBSecurityList"
   vcn_id         = oci_core_virtual_network.FoggyKitchenVCN.id
+
+  # Ingress
+
+  ingress_security_rules {
+    description = "External access to Load Balancer in K8S"
+    source      = lookup(var.network_cidrs, "ALL-CIDR")
+    source_type = "CIDR_BLOCK"
+    protocol    = local.tcp_protocol_number
+    stateless   = false
+
+    tcp_options {
+      max = local.lb_listener_port
+      min = local.lb_listener_port
+    }
+  }
+
+  # Egress
+
+  egress_security_rules {
+    description      = "Allow traffic to Kubernetes Worker Nodes"
+    destination      = lookup(var.network_cidrs, "NODES-PODS-SUBNET-REGIONAL-CIDR")
+    destination_type = "CIDR_BLOCK"
+    protocol         = local.tcp_protocol_number
+    stateless        = false
+
+    tcp_options {
+      max = local.oke_nodes_max_port
+      min = local.oke_nodes_min_port
+    }
+  }
+
 }
 
 resource "oci_core_security_list" "FoggyKitchenOKEAPIEndpointSecurityList" {
