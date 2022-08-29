@@ -49,5 +49,7 @@ data "template_file" "service_deployment" {
       flex_lb_min_shape = var.flex_lb_min_shape 
       flex_lb_max_shape = var.flex_lb_max_shape  
       lb_listener_port  = var.lb_listener_port
+      lb_nsg            = var.lb_nsg
+      lb_nsg_id         = var.lb_nsg ? oci_core_network_security_group.FoggyKitchenOKELBSecurityGroup[0].id : ""
   }
 }

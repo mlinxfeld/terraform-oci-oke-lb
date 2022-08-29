@@ -200,6 +200,7 @@ resource "oci_core_security_list" "FoggyKitchenOKENodesSecurityList" {
 }
 
 resource "oci_core_security_list" "FoggyKitchenOKELBSecurityList" {
+  count          = var.lb_nsg ? 0 : 1
   provider       = oci.targetregion
   compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
   display_name   = "FoggyKitchenOKELBSecurityList"
@@ -236,6 +237,50 @@ resource "oci_core_security_list" "FoggyKitchenOKELBSecurityList" {
   }
 
 }
+
+# OKE LB NSG
+resource "oci_core_network_security_group" "FoggyKitchenOKELBSecurityGroup" {
+  count          = var.lb_nsg ? 1 : 0
+  provider       = oci.targetregion
+  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
+  display_name   = "FoggyKitchenLBSecurityGroup"
+  vcn_id         = oci_core_virtual_network.FoggyKitchenVCN.id
+}
+
+# OKE LB NSG Egress Rules
+resource "oci_core_network_security_group_security_rule" "FoggyKitchenOKELBSecurityEgressGroupRule" {
+  count                     = var.lb_nsg ? 1 : 0
+  provider                  = oci.targetregion
+  network_security_group_id = oci_core_network_security_group.FoggyKitchenOKELBSecurityGroup[0].id
+  direction                 = "EGRESS"
+  protocol                  = local.tcp_protocol_number
+  destination               = lookup(var.network_cidrs, "NODES-PODS-SUBNET-REGIONAL-CIDR")
+  destination_type          = "CIDR_BLOCK"
+  tcp_options {
+    destination_port_range {
+      max = local.oke_nodes_max_port
+      min = local.oke_nodes_min_port
+    }
+  }
+}
+
+# OKE LB NSG Ingress Rules
+resource "oci_core_network_security_group_security_rule" "FoggyKitchenOKELBSecurityIngressGroupRules" {
+  count                     = var.lb_nsg ? 1 : 0
+  provider                  = oci.targetregion
+  network_security_group_id = oci_core_network_security_group.FoggyKitchenOKELBSecurityGroup[0].id
+  direction                 = "INGRESS"
+  protocol                  = local.tcp_protocol_number
+  source                    = lookup(var.network_cidrs, "ALL-CIDR")
+  source_type               = "CIDR_BLOCK"
+  tcp_options {
+    destination_port_range {
+      max = local.lb_listener_port
+      min = local.lb_listener_port
+    }
+  }
+}
+
 
 resource "oci_core_security_list" "FoggyKitchenOKEAPIEndpointSecurityList" {
   provider       = oci.targetregion
@@ -404,21 +449,14 @@ resource "oci_core_subnet" "FoggyKitchenOKENodesPodsSubnet" {
 resource "oci_core_subnet" "FoggyKitchenOKELBSubnet" {
   provider                   = oci.targetregion
   cidr_block                 = lookup(var.network_cidrs, "LB-SUBNET-REGIONAL-CIDR")
-  compartment_id             = var.compartment_ocid
+  compartment_id             = oci_identity_compartment.FoggyKitchenCompartment.id
   display_name               = "FoggyKitchenOKELBSubnet"
   dns_label                  = "lbsub"
   vcn_id                     = oci_core_virtual_network.FoggyKitchenVCN.id
   prohibit_public_ip_on_vnic = false
   route_table_id             = oci_core_route_table.FoggyKitchenVCNPublicRouteTable.id
   dhcp_options_id            = oci_core_virtual_network.FoggyKitchenVCN.default_dhcp_options_id
-  security_list_ids          = [oci_core_security_list.FoggyKitchenOKELBSecurityList.id]
+  security_list_ids          = var.lb_nsg ? null : [oci_core_security_list.FoggyKitchenOKELBSecurityList[0].id]
 }
 
-/*
-resource "oci_core_public_ip" "FoggyKitchenLBPublicIP" {
-  provider       = oci.targetregion
-  compartment_id = var.compartment_ocid
-  display_name   = "FoggyKitchenLBPublicIP"
-  lifetime       = "RESERVED"
-}
-*/
+

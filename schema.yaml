@@ -39,6 +39,7 @@ variableGroups:
   - flex_lb_min_shape
   - flex_lb_max_shape
   - lb_listener_port
+  - lb_nsg
 
 variables:
 
@@ -222,7 +223,14 @@ variables:
     default: 80
     title: "Load Balancer Listener Port"
     description: "Choose Load Balancer Listener Port."
-    
+
+  lb_nsg:
+    type: boolean
+    title: "Usg NSG instead of Security List for OKE Load Balancer?"
+    description: "Check if you want to use Network Security Group for OKE Load Balancer instead of Security List."
+    visible: true
+    default: false
+
   ssh_public_key:
     type: oci:core:ssh:publickey
     title: "Public SSH Key"

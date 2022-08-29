@@ -9,6 +9,7 @@ metadata:
     service.beta.kubernetes.io/oci-load-balancer-shape: "${lb_shape}"
     ${ lb_shape == "flexible" ? "service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: \"${flex_lb_min_shape}\"" : "" }
     ${ lb_shape == "flexible" ? "service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: \"${flex_lb_max_shape}\"" : "" }  
+    ${ lb_nsg ? "oci.oraclecloud.com/oci-network-security-groups: \"${lb_nsg_id}\"" : "" }
 spec:
   type: LoadBalancer
   ports:

@@ -63,6 +63,10 @@ variable "lb_listener_port" {
   default = 80
 }
 
+variable "lb_nsg" {
+  default = true
+}
+
 variable "network_cidrs" {
   type = map(string)
 
