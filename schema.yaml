@@ -199,7 +199,7 @@ variables:
   flex_lb_max_shape:
     type: enum
     required: false
-    default: "10"
+    default: "100"
     title: "LB Flex Max Shape"
     description: "Choose Maximum Shape for Flex Load Balancer."
     enum:
@@ -229,7 +229,7 @@ variables:
     title: "Usg NSG instead of Security List for OKE Load Balancer?"
     description: "Check if you want to use Network Security Group for OKE Load Balancer instead of Security List."
     visible: true
-    default: false
+    default: true
 
   ssh_public_key:
     type: oci:core:ssh:publickey
