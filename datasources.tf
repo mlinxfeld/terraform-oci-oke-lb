@@ -38,6 +38,7 @@ data "template_file" "ngnix_deployment" {
   template = "${file("${path.module}/templates/ngnix.template.yaml")}"
   vars     = {
       number_of_ngnix_replicas = var.number_of_ngnix_replicas
+      is_arm_node_shape        = local.is_arm_node_shape
   }
 }
 
