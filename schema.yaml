@@ -110,7 +110,7 @@ variables:
     type: oci:core:instanceshape:name
     title: "K8S Nodes Shape"
     description: "Choose a shape for your K8S nodes"
-    default: "VM.Standard.E4.Flex"
+    default: "VM.Standard.A1.Flex"
     required: false
     dependsOn:
       compartmentId: ${compartment_ocid}
