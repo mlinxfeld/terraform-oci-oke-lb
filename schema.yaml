@@ -32,6 +32,7 @@ variableGroups:
   - oke_node_shape
   - flex_shape_memory
   - flex_shape_ocpus
+  - oke_node_boot_volume_size_in_gbs
   - oke_node_os_version
   - cluster_name
   - number_of_ngnix_replicas
@@ -120,7 +121,7 @@ variables:
     minimum: 1
     maximum: 128
     multipleOf: 1
-    default: 2
+    default: 1
     title: "K8S Nodes Flex Shape OCPUs"
     description: "Choose number of OCPUs for Flex Shape."
     visible:
@@ -145,7 +146,7 @@ variables:
     minimum: 1
     maximum: 128
     multipleOf: 1
-    default: 16
+    default: 6
     title: "K8S Nodes Flex Shape Memory (GB)"
     description: "Choose number GB for Flex Shape Memory."
     visible:
@@ -163,6 +164,16 @@ variables:
           - eq:
             - oke_node_shape 
             - "VM.Optimized3.Flex"
+
+  oke_node_boot_volume_size_in_gbs:
+    type: number
+    required: false
+    minimum: 1
+    maximum: 256
+    multipleOf: 1
+    default: 50
+    title: "What is the size of K8S node boot block volume (GB)?"
+    description: "Choose number of GB for the size of K8S node boot block volume."
 
   lb_shape:
     type: enum
