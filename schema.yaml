@@ -41,6 +41,7 @@ variableGroups:
   - flex_lb_max_shape
   - lb_listener_port
   - lb_nsg
+  - use_reserved_public_ip_for_lb
 
 variables:
 
@@ -241,6 +242,13 @@ variables:
     description: "Check if you want to use Network Security Group for OKE Load Balancer instead of Security List."
     visible: true
     default: true
+
+  use_reserved_public_ip_for_lb:
+    type: boolean
+    title: "Usg Reserved Public IP for OKE Load Balancer?"
+    description: "Check if you want to use Reserved Public IP for OKE Load Balancer."
+    visible: true
+    default: false
 
   ssh_public_key:
     type: oci:core:ssh:publickey
