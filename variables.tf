@@ -61,6 +61,10 @@ variable "flex_lb_max_shape" {
   default = 100
 }
 
+variable "use_reserved_public_ip_for_lb" {
+  default = false
+}
+
 variable "lb_listener_port" {
   default = 80
 }

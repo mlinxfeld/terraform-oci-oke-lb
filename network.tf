@@ -1,3 +1,14 @@
+resource "oci_core_public_ip" "FoggyKitchenReservedPublicIP" {
+  count          = var.use_reserved_public_ip_for_lb ? 1 : 0
+  provider       = oci.targetregion
+  compartment_id = oci_identity_compartment.FoggyKitchenCompartment.id
+  lifetime       = "RESERVED"
+  display_name   = "FoggyKitchenReservedPublicIP"
+  lifecycle {
+    ignore_changes = [private_ip_id]
+  }
+}
+
 resource "oci_core_virtual_network" "FoggyKitchenVCN" {
   provider       = oci.targetregion
   cidr_block     = lookup(var.network_cidrs, "VCN-CIDR")

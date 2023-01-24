@@ -12,6 +12,7 @@ metadata:
     ${ lb_nsg ? "oci.oraclecloud.com/oci-network-security-groups: \"${lb_nsg_id}\"" : "" }
 spec:
   type: LoadBalancer
+  ${ use_reserved_public_ip_for_lb == "true" ? "loadBalancerIP: \"${reserved_public_ip_for_lb}\"" : "" }
   ports:
   - port: ${lb_listener_port}
   selector:
